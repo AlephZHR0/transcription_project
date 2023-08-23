@@ -1,4 +1,5 @@
-path = "G:/Meu Drive/Recordings"
+# path = "G:/Meu Drive/Recordings"
+path = "C:/Users/jpjoa/OneDrive/Área de Trabalho/backup recc"
 
 schedule = {
     "Monday": [
