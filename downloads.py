@@ -1,6 +1,6 @@
 from pytube import YouTube
 
-def from_youtube(link):
+def from_youtube(link: str) -> str:
     """Downloads a video from youtube and returns the file name"""
     print("Downloading youtube video")
     video = YouTube(link)

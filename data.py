@@ -3,7 +3,7 @@ path = "C:/Users/jpjoa/OneDrive/Área de Trabalho/backup recc"
 
 schedule = {
     "Monday": [
-        {"name": "Física 4", "start_time": "19:10", "end_time": "20:50"},
+        {"name": "Física 4 ", "start_time": "19:10", "end_time": "20:50"},
         {"name": "Sistemas Operacionais 1", "start_time": "21:10", "end_time": "22:50"}
     ],
     "Tuesday": [
