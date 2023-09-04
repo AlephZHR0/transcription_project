@@ -1,11 +1,26 @@
+import os
+
 from pytube import YouTube
 
-def from_youtube(link: str) -> str:
-    """Downloads a video from youtube and returns the file name"""
+
+def download_youtube_audio(link: str) -> str:
+    """
+    Downloads a video from YouTube and returns the file name
+
+    Args:
+        link (str): full link to the YouTube video
+
+    Returns:
+        str: file name of the downloaded video
+    """
     print("Downloading youtube video")
     video = YouTube(link)
     stream = video.streams.get_audio_only()
-    stream.download()
+    try:
+        stream.download("yt_downloads")
+    except FileNotFoundError:
+        os.mkdir("yt_downloads")
+        stream.download("yt_downloads")
     file_name = stream.default_filename
     print("Downloaded successfully")
-    return file_name
+    return f"yt_downloads/{file_name}"

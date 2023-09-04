@@ -1,23 +1,57 @@
-import os
-from data import path
-from transcribe import transcribe_write_delete, get_names
-from organize import organize, remove_file
-from verifyers import is_already_transcribed
+from downloads import download_youtube_audio
+from organize import clear_terminal
+from subjects_manipulation import (create_subject, remove_subject,
+                                   show_all_subjects_by_weekday)
+from transcribe import (get_right_model, transcribe_all_files_and_organize,
+                        transcribe_all_files_in_a_directory,
+                        transcribe_write_delete)
+from verifyers import go_to_valid_dir, want_to_remove_file
 
-accepted_audio_formats = ["mp3", "mp4", "mpeg", "mpga", "m4a", "wav", "webm"]
-
-for record in os.listdir(path):
-    if os.path.isfile(f"{path}/{record}"):
-        _, file_name, file_ext = get_names(f"{path}/{record}")
-        if file_ext in accepted_audio_formats:
-            if not is_already_transcribed(path, file_name):    
-                transcribe_write_delete(f"{path}/{record}")
-                organize(path, f"{file_name}.txt")
-            else:
-                print(f"{record} is already transcribed")
-                remove_file(path, file_name, file_ext)
-        elif file_ext == "txt":
-            organize(path, record)
-        else:
-            print(f"{record} is not a valid file")
-print("The program ended with no problems")
+model = get_right_model()
+clear_terminal()
+while True:
+    user_input = input("""1. To see all subjects by weekday
+2. Add a subject
+3. Remove a subject
+4. Transcribe all files in a directory and organize by schedule (locally)
+5. Transcribe all files in a directory and don't organize by schedule (locally)
+6. Transcribe from a video (online)
+'.' To Exit the program at any time
+Type your option: """).strip()
+    match user_input:
+        case "1":
+            clear_terminal()
+            show_all_subjects_by_weekday()
+        case "2":
+            clear_terminal()
+            create_subject()
+        case "3":
+            clear_terminal()
+            remove_subject()
+        case "4":
+            clear_terminal()
+            remove = want_to_remove_file()
+            if remove is None:
+                continue
+            transcribe_all_files_and_organize(model=model, remove_f=remove)
+        case "5":
+            clear_terminal()
+            remove = want_to_remove_file()
+            if remove is None:
+                continue
+            transcribe_all_files_in_a_directory(model=model, remove_f=remove)
+        case "6":
+            clear_terminal()
+            remove = want_to_remove_file()
+            if remove is None:
+                continue
+            if go_to_valid_dir() is not None:
+                transcribe_write_delete(model=model, full_path=download_youtube_audio(
+                    input("Type the url of the video: ").strip()), remove_f=remove)
+        case ".":
+            clear_terminal()
+            print("The program ended with no problems")
+            exit()
+        case _:
+            clear_terminal()
+            print("Invalid option")
