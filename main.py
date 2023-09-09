@@ -7,7 +7,12 @@ from transcribe import (get_right_model, transcribe_all_files_and_organize,
                         transcribe_write_delete)
 from verifyers import go_to_valid_dir, want_to_remove_file
 
-model = get_right_model()
+try:
+    model = get_right_model(failed_to_load_sys_info=False)
+except Exception:
+    print("""There was an error loading the system information, you can continue with the model of your preference, but 
+          verify if you have enough memory on your graphics card for the model of your choice.""")
+    model = get_right_model(failed_to_load_sys_info=True)
 clear_terminal()
 while True:
     user_input = input("""1. To see all subjects by weekday

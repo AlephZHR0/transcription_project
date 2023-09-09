@@ -11,14 +11,18 @@ ACCEPTED_AUDIO_FORMATS = ["mp3", "mp4", "mpeg", "mpga", "m4a", "wav", "webm"]
 MODELS = ["tiny", "base", "small", "medium", "large-v2"]
 
 
-def get_right_model() -> whisper.model:
+def get_right_model(failed_to_load_sys_info: bool = False) -> whisper.model:
     """
     Returns the right model based on the available memory
 
     Returns:
         whisper.model: The selected model
     """
-    recomended_model, available_memory = get_specs_and_return_right_model()
+    if not failed_to_load_sys_info:
+        recomended_model, available_memory = get_specs_and_return_right_model()
+    else:
+        recomended_model = MODELS[0]
+        available_memory = "N/A"
     user_model_of_choice = input(f"""The available models are:
 1. {MODELS[0]}
 2. {MODELS[1]}

@@ -13,8 +13,13 @@ def download_youtube_audio(link: str) -> str:
     Returns:
         str: file name of the downloaded video
     """
+    if link == ".":
+        exit()
     print("Downloading youtube video")
-    video = YouTube(link)
+    try:
+        video = YouTube(link)
+    except Exception:
+        print("Invalid link\nTry again with a valid link")
     stream = video.streams.get_audio_only()
     try:
         stream.download("yt_downloads")
