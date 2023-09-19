@@ -1,19 +1,60 @@
 import os
 from typing import Tuple
-
+from organize import get_week_day_and_time
+from datetime import datetime
+try:
+    from subjects import schedule
+except ModuleNotFoundError:
+    schedule = {}
 import whisper
 
 from get_pc_specs import get_specs_and_return_right_model
 from organize import organize, remove_file
 from verifyers import go_to_valid_dir, is_already_transcribed
+from pydub import AudioSegment
 
 ACCEPTED_AUDIO_FORMATS = ["mp3", "mp4", "mpeg", "mpga", "m4a", "wav", "webm"]
 MODELS = ["tiny", "base", "small", "medium", "large-v2"]
 
 
+def trim_audio_file_into_class_time(file_path: str, file_name: str, ext: str) -> None:
+    """
+    Trims audio file into class time
+    
+    Args:
+        file_path (str): Path to the file
+        file_name (str): Name of the file without the extension
+        ext (str): Extension of the file without the dot
+    """
+    def class_time_to_miliseconds(class_time: datetime.time) -> int:
+        return (class_time.seconds) + ((class_time.minutes + 5) * 60) + (class_time.hours * 3600)
+    
+
+    subject_week_day, subject_time = get_week_day_and_time(f"{file_path}/{file_name}.{ext}")
+    for subject in schedule[subject_week_day]:
+        if subject["start_time"] <= subject_time <= subject["end_time"]:
+            class_time = subject["end_time"] - subject["start_time"]
+            break
+    
+    print(f""""{file_name}.{ext}" is being trimmed into class time...""")
+    song = AudioSegment.from_file(f"{file_path}/{file_name}/{ext}", format=f"{ext}")
+    class_to_the_end = song[:class_time_to_miliseconds(class_time)]
+    class_to_the_end.export(f"{file_path}/{file_name}.{ext}", format=f"{ext}")
+    print("New Audio file is created and saved")
+    print(f""""{file_name}.{ext}" was successfully trimmed into class time!""")
+
+
+# TODO make a function that sees the audio duration and check if it recorded the next class, if true, trim 5 min before and 5 the duration of next class + 5 min
+# TODO: combine the two functions above into one
+# TODO: run it before the transcribe_all_files_and_organize on main.py to certify that the audio file is trimmed into class time and got all the classes recorded even when forget to stop the recording
+
+
 def get_right_model(failed_to_load_sys_info: bool = False) -> whisper.model:
     """
     Returns the right model based on the available memory
+
+    Args:
+        failed_to_load_sys_info (bool): If True, returns the first model
 
     Returns:
         whisper.model: The selected model
