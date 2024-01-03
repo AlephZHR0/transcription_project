@@ -14,7 +14,7 @@ from verifyers import go_to_valid_dir, is_already_transcribed
 from pydub import AudioSegment
 
 ACCEPTED_AUDIO_FORMATS = ["mp3", "mp4", "mpeg", "mpga", "m4a", "wav", "webm"]
-MODELS = ["tiny", "base", "small", "medium", "large-v2"]
+MODELS = ["tiny", "base", "small", "medium", "large-v3"]
 
 
 def trim_audio_file_into_class_time(file_path: str, file_name: str, ext: str) -> None:
